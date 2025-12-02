@@ -1,44 +1,35 @@
-name: Build and Deploy to GitHub Pages # 工作流的名称
+name: 部署到 GitHub Pages
 
-# 定义触发条件：当代码推送到 main 分支时触发此工作流
 on:
   push:
-    branches: [main]
+    branches:
+      - main # 或你的主分支名称
+  pull_request:
+    branches:
+      - main
 
-# 设置必要的权限，使部署步骤有权限写入仓库
-permissions:
-  contents: write
-
-# 定义任务
 jobs:
   build-and-deploy:
-    # 任务运行在最新的 Ubuntu 虚拟机环境中
     runs-on: ubuntu-latest
 
-    # 定义任务步骤
     steps:
-      # 步骤1：将仓库代码拉取到虚拟机
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v3
 
-      # 步骤2：设置 Node.js 环境
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: 设置 Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "18" # 建议指定与项目兼容的Node.js版本
-          cache: "npm" # 缓存依赖，加速后续构建
+          node-version: "18" # 根据你的项目调整版本
+          cache: "npm"
 
-      # 步骤3：安装项目依赖
-      - name: Install Dependencies
+      - name: 安装依赖
         run: npm install
 
-      # 步骤4：执行构建命令，生成静态文件
-      - name: Build Project
-        run: npm run build # 确保package.json中定义了build脚本
+      - name: 构建项目
+        run: npm run build
 
-      # 步骤5：部署到 GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          branch: gh-pages # 将构建产物部署到这个分支
-          folder: dist # 重要：这里填写项目构建后生成的目录名，常见的有 'dist', 'build', 'out' 等
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
