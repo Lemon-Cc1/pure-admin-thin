@@ -8,6 +8,12 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  id-token: write
+  pages: write
+  deployments: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -47,10 +53,3 @@ jobs:
         uses: actions/deploy-pages@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  # 权限设置
-  permissions:
-    contents: write
-    id-token: write
-    issues: write
-    pull-requests: write
